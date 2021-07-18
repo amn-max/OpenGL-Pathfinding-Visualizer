@@ -6,7 +6,7 @@
 #include <math.h>
 #include <vector>
 #include <string>
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
 #include <queue>
 #include <Windows.h>
 #include <chrono>
@@ -61,7 +61,7 @@ public:
 	int type;
 	bool visited;
 	bool blocked;
-	SPoint parent = SPoint(NOTFOUND, NOTFOUND);
+	SPoint parent = SPoint(NULL, NULL);
 	Node(void) {
 
 	}
@@ -183,6 +183,9 @@ void reDrawPoints() {
 
 bool hasNodePlaced(Node n) {
 	int type = n.getType();
+	if (type == PATH) {
+		return true;
+	}
 	if (type == SOURCE || type == DEST || type == WALL || type == CHECKED) {
 		return true;
 	}
@@ -344,6 +347,27 @@ void makeReady() {
 	//cout << "start node" << start.getGridPositionX() << "," << start.getGridPositionY() << endl;
 }
 
+void showPath(int value) {
+
+	cout << " Path is : " << endl;
+	if (mapn[endn.getGridPositionX()][endn.getGridPositionY()].type != INF) {
+		Node current = mapn[endn.getGridPositionX()][endn.getGridPositionY()];
+
+		while (current.type != SOURCE && current.parent.x != NULL && current.parent.y != NULL) {
+			cout << "Current node at end : " << current.parent.x << "," << current.parent.y << endl;
+			//path.push_back(current.parent);
+			current = mapn[current.parent.x][current.parent.y];
+			//nodes.at(current.getGridPositionX()* n + current.getGridPositionY()).type = PATH;
+			if (current.type != start.type) {
+				nodes.at(current.getGridPositionX() * n + current.getGridPositionY()).type = PATH;
+			}
+		}
+		glutPostRedisplay();
+	}
+
+
+
+}
 void drive(int value) {
 	if (value > 0) {
 		Node current = nQueue.top();
@@ -516,7 +540,7 @@ void drive(int value) {
 		//	}
 		//	cout << endl;
 		//}
-		
+
 
 	}
 	int prevSize = nQueue.size();
@@ -528,20 +552,10 @@ void drive(int value) {
 	}
 	int currSize = nQueue.size();
 	if (prevSize - currSize && flag == 0) {
-		glutTimerFunc(TIME_SECS/SCREEN_FPS, drive, nQueue.size());
+		glutTimerFunc(TIME_SECS / SCREEN_FPS, drive, nQueue.size());
 	}
-	else if(flag==1){
-		cout << " Path is : " << endl;
-		if (mapn[endn.getGridPositionX()][endn.getGridPositionY()].type != INF) {
-			Node current = mapn[endn.getGridPositionX()][endn.getGridPositionX()];
-			//cout << "Current node at end : " << current.parent.x << "," << current.parent.y << endl;
-			while (current.type!=SOURCE) {
-				cout << "Current node at end : " << current.parent.x << "," << current.parent.y << endl;
-				path.push_back(current.parent);
-				current = mapn[current.parent.y][current.parent.x];
-				//nodes.at((current.parent.x + 1)* n + (current.parent.y + 1));
-			}
-		}
+	else if (flag == 1) {
+		showPath(1);
 	}
 
 }
