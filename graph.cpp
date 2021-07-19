@@ -1,10 +1,8 @@
-﻿#include <stdio.h>
-#include <GL/glut.h>
+﻿#include <GL/glut.h>
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <Windows.h>
-#include <chrono>
+
 using namespace std;
 const int n = 40;
 
@@ -236,7 +234,7 @@ void handleMouse(int button, int state, int x, int y) {
 	if (canAcceptInput) {
 		if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 			isMouseLeftDown = 0;
-			//cout << "Mouse Left Clicked at : x=" << x / 50 + 1 << " y=" << y / 50 + 1 << endl;
+			////cout << "Mouse Left Clicked at : x=" << x / 50 + 1 << " y=" << y / 50 + 1 << endl;
 			addPoints(x, y);
 		}
 		else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
@@ -275,30 +273,30 @@ void makeReady() {
 		for (int j = 0; j < n; j++) {
 			int x = nodes.at(j * n + i).getGridPositionX();
 			int y = nodes.at(j * n + i).getGridPositionY();
-			//cout << "(" << x << "," << y << ")" << "  ";
+			////cout << "(" << x << "," << y << ")" << "  ";
 		}
-		//cout << endl;
+		////cout << endl;
 	}
 
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			int type = nodes.at(j * n + i).getType();
 			if (type == SOURCE) {
-				//cout << " " << "S" << " ";
+				////cout << " " << "S" << " ";
 				start = &nodes.at(j * n + i);
 			}
 			else if (type == DEST) {
-				//cout << " " << "D" << " ";
+				////cout << " " << "D" << " ";
 				endn = &nodes.at(j * n + i);
 			}
 			else if (type == WALL) {
-				//cout << " " << "W" << " ";
+				////cout << " " << "W" << " ";
 			}
 			else if (type == EMPTY) {
-				//cout << " " << "I" << " ";
+				////cout << " " << "I" << " ";
 			}
 		}
-		//cout << endl;
+		////cout << endl;
 	}
 
 	//Convert to 2d array
@@ -312,46 +310,46 @@ void makeReady() {
 		}
 	}
 
-	//cout << "Distmap is:" << endl;
+	////cout << "Distmap is:" << endl;
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			try {
 
-				//cout << "(" << mapn[i][j].getGridPositionX() << "," << mapn[i][j].getGridPositionY() << ")" << "  ";
+				////cout << "(" << mapn[i][j].getGridPositionX() << "," << mapn[i][j].getGridPositionY() << ")" << "  ";
 			}
 			catch (const out_of_range& e) {
 
 			}
 		}
-		//cout << endl;
+		////cout << endl;
 	}
 
 
-	//cout << "distance" << endl;
+	////cout << "distance" << endl;
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			try {
 
-				//cout << mapn[i][j].distance << "  ";
+				////cout << mapn[i][j].distance << "  ";
 			}
 			catch (const out_of_range& e) {
 
 			}
 		}
-		//cout << endl;
+		////cout << endl;
 	}
 	nQueue.push(*start);
-	//cout << "start node" << start.getGridPositionX() << "," << start.getGridPositionY() << endl;
+	////cout << "start node" << start.getGridPositionX() << "," << start.getGridPositionY() << endl;
 }
 
 void showPath(int value) {
 
-	cout << " Path is : " << endl;
+	//cout << " Path is : " << endl;
 	if (mapn[endn->getGridPositionX()][endn->getGridPositionY()].type != INF) {
 		Node current = mapn[endn->getGridPositionX()][endn->getGridPositionY()];
 
 		while (current.type != SOURCE && current.parent.x != NULL && current.parent.y != NULL) {
-			cout << "Current node at end : " << current.parent.x << "," << current.parent.y << endl;
+			//cout << "Current node at end : " << current.parent.x << "," << current.parent.y << endl;
 			//path.push_back(current.parent);
 			current = mapn[current.parent.x][current.parent.y];
 			//nodes.at(current.getGridPositionX()* n + current.getGridPositionY()).type = PATH;
@@ -371,13 +369,13 @@ void drive(int value) {
 		if (!nQueue.empty()) {
 			current = nQueue.top();
 		}
-		///cout <<"Size Queue: "<<nQueue.size() << endl;/
+		/////cout <<"Size Queue: "<<nQueue.size() << endl;/
 		//nQueue.pop();
 		Node t;
-		/*//cout << "End Node" << endn.getGridPositionX() << "," << endn.getGridPositionY() << endl;
-		//cout << "Current Node" << current.getGridPositionX() << "," << current.getGridPositionY() << endl;*/
+		/*////cout << "End Node" << endn.getGridPositionX() << "," << endn.getGridPositionY() << endl;
+		////cout << "Current Node" << current.getGridPositionX() << "," << current.getGridPositionY() << endl;*/
 		if (current.type == DEST) {
-			//cout << "End Found" << endl;
+			////cout << "End Found" << endl;
 			mapn[endn->getGridPositionX()][endn->getGridPositionY()].distance = FOUND;
 			flag = 1;
 		}
@@ -386,8 +384,8 @@ void drive(int value) {
 			t = mapn[current.getGridPositionX() - 1][current.getGridPositionY()];
 			//top top
 			if (!t.visited && t.getType() != WALL && t.distance > current.distance + hVDistance) {
-				/*//cout << "Top Top temp is:" << t.getType() << endl;
-				//cout << "Top Top type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+				/*////cout << "Top Top temp is:" << t.getType() << endl;
+				////cout << "Top Top type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 				t.distance = current.distance + hVDistance;
 				mapn[current.getGridPositionX() - 1][current.getGridPositionY()].distance = current.distance + hVDistance;
 				t.parent.x = current.getGridPositionX();
@@ -402,8 +400,8 @@ void drive(int value) {
 			if (current.getGridPositionY() - 1 > 0) {
 				t = mapn[current.getGridPositionX() - 1][current.getGridPositionY() - 1];
 				if (!t.visited && t.getType() != WALL && t.distance > current.distance + dDistance) {
-					/*//cout << "Top left temp is:" << t.getType() << endl;
-					//cout << "Top left type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+					/*////cout << "Top left temp is:" << t.getType() << endl;
+					////cout << "Top left type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 					t.distance = current.distance + dDistance;
 					mapn[current.getGridPositionX() - 1][current.getGridPositionY() - 1].distance = current.distance + dDistance;
 					t.parent.x = current.getGridPositionX();
@@ -419,8 +417,8 @@ void drive(int value) {
 			if (current.getGridPositionY() + 1 < n) {
 				t = mapn[current.getGridPositionX() - 1][current.getGridPositionY() + 1];
 				if (!t.visited && t.getType() != WALL && t.distance > current.distance + dDistance) {
-					/*//cout << "Top right temp is:" << t.getType() << endl;
-					//cout << "Top right type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+					/*////cout << "Top right temp is:" << t.getType() << endl;
+					////cout << "Top right type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 					t.distance = current.distance + dDistance;
 					mapn[current.getGridPositionX() - 1][current.getGridPositionY() + 1].distance = current.distance + dDistance;
 					t.parent.x = current.getGridPositionX();
@@ -436,8 +434,8 @@ void drive(int value) {
 		if (current.getGridPositionY() - 1 > 0) {
 			t = mapn[current.getGridPositionX()][current.getGridPositionY() - 1];
 			if (!t.visited && t.getType() != WALL && t.distance > current.distance + hVDistance) {
-				/*//cout << "left temp is:" << t.getType() << endl;
-				//cout << "left type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+				/*////cout << "left temp is:" << t.getType() << endl;
+				////cout << "left type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 				t.distance = current.distance + hVDistance;
 				mapn[current.getGridPositionX()][current.getGridPositionY() - 1].distance = current.distance + hVDistance;
 				t.parent.x = current.getGridPositionX();
@@ -453,8 +451,8 @@ void drive(int value) {
 		if (current.getGridPositionY() + 1 < n) {
 			t = mapn[current.getGridPositionX()][current.getGridPositionY() + 1];
 			if (!t.visited && t.getType() != WALL && t.distance > current.distance + hVDistance) {
-				/*//cout << "right temp is:" << t.getType() << endl;
-				//cout << "right type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+				/*////cout << "right temp is:" << t.getType() << endl;
+				////cout << "right type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 				t.distance = current.distance + hVDistance;
 				mapn[current.getGridPositionX()][current.getGridPositionY() + 1].distance = current.distance + hVDistance;
 				t.parent.x = current.getGridPositionX();
@@ -471,8 +469,8 @@ void drive(int value) {
 			//down down
 			t = mapn[current.getGridPositionX() + 1][current.getGridPositionY()];
 			if (!t.visited && t.getType() != WALL && t.distance > current.distance + hVDistance) {
-				/*//cout << "down temp is:" << t.getType() << endl;
-				//cout << "down type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+				/*////cout << "down temp is:" << t.getType() << endl;
+				////cout << "down type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 				t.distance = current.distance + hVDistance;
 				mapn[current.getGridPositionX() + 1][current.getGridPositionY()].distance = current.distance + hVDistance;
 				t.parent.x = current.getGridPositionX();
@@ -487,8 +485,8 @@ void drive(int value) {
 			if (current.getGridPositionY() - 1 >= 0) {
 				t = mapn[current.getGridPositionX() + 1][current.getGridPositionY() - 1];
 				if (!t.visited && t.getType() != WALL && t.distance > current.distance + dDistance) {
-					/*//cout << "down left temp is:" << t.getType() << endl;
-					//cout << "down left type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+					/*////cout << "down left temp is:" << t.getType() << endl;
+					////cout << "down left type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 					t.distance = current.distance + dDistance;
 					mapn[current.getGridPositionX() + 1][current.getGridPositionY() - 1].distance = current.distance + dDistance;
 					t.parent.x = current.getGridPositionX();
@@ -504,8 +502,8 @@ void drive(int value) {
 			if (current.getGridPositionY() + 1 < n) {
 				t = mapn[current.getGridPositionX() + 1][current.getGridPositionY() + 1];
 				if (!t.visited && t.getType() != WALL && t.distance > current.distance + dDistance) {
-					/*//cout << "down right temp is:" << t.getType() << endl;
-					//cout << "down right type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
+					/*////cout << "down right temp is:" << t.getType() << endl;
+					////cout << "down right type pos:" << t.getGridPositionX() << "," << t.getGridPositionY() << endl;*/
 					t.distance = current.distance + dDistance;
 					mapn[current.getGridPositionX() + 1][current.getGridPositionY() + 1].distance = current.distance + dDistance;
 					t.parent.x = current.getGridPositionX();
@@ -524,7 +522,7 @@ void drive(int value) {
 		}
 		glutPostRedisplay();
 		//mapn[current.getGridPositionX()][current.getGridPositionY()].visited = true;
-		//cout << endl;
+		////cout << endl;
 		//for (int i = 0; i < n; i++) {
 		//	for (int j = 0; j < n; j++) {
 		//		try {
@@ -532,13 +530,13 @@ void drive(int value) {
 		//			if (mapn[i][j].distance != INF && !hasNodePlaced(mapn[i][j])) {
 		//				//nodes.at(j * n + i).type = CHECKED;
 		//			}
-		//			cout << mapn[i][j].distance << "\t";
+		//			//cout << mapn[i][j].distance << "\t";
 		//		}
 		//		catch (const out_of_range& e) {
 
 		//		}
 		//	}
-		//	cout << endl;
+		//	//cout << endl;
 		//}
 
 
@@ -548,7 +546,7 @@ void drive(int value) {
 		nQueue.pop();
 	}
 	else {
-		cout << "Destination Not Found" << endl;
+		//cout << "Destination Not Found" << endl;
 		canAcceptInput = true;
 	}
 	int currSize = nQueue.size();
@@ -570,16 +568,16 @@ void findPath() {
 
 	//}
 
-	//cout << "Path is:" << endl;
+	////cout << "Path is:" << endl;
 	//if (path.size() > 0) {
 	//	for (int i = 0; i < path.size(); i++) {
-	//		//cout << "(" << path.at(i).getGridPositionX() << "," << path.at(i).getGridPositionY() << ")" << "  ";
+	//		////cout << "(" << path.at(i).getGridPositionX() << "," << path.at(i).getGridPositionY() << ")" << "  ";
 	//	}
 	//}
 }
 
 void display(void) {
-	//cout << "Node Size is : " << nodes.size() << endl;
+	////cout << "Node Size is : " << nodes.size() << endl;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.964, 0.964, 0.964, 1.0);
 	for (int i = 0; i < n; i++) {
@@ -631,12 +629,12 @@ void reset() {
 	path.clear();
 	vector<SPoint>().swap(path);
 	path.shrink_to_fit();
-	cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
+	//cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
 	nodes.clear();
 	vector<Node>().swap(nodes);
-	cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
+	//cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
 	nodes.shrink_to_fit();
-	cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
+	//cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
 	//delete &start;
 	//delete &endn;
 	for (int i = 0; i < n; i++) {
@@ -656,7 +654,9 @@ void onKeyPress(unsigned char key, int x, int y) {
 		break;
 	case 115:
 	case 'S':
-		findPath(); //starts algorithm
+		if (canAcceptInput) {
+			findPath();//starts algorithm
+		}
 		break;
 	case 114:
 	case 'R':
