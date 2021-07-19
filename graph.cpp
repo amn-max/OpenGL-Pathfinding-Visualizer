@@ -1,22 +1,14 @@
 ﻿#include <stdio.h>
 #include <GL/glut.h>
 #include <iostream>
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <math.h>
 #include <vector>
-#include <string>
-//#include <bits/stdc++.h>
 #include <queue>
 #include <Windows.h>
 #include <chrono>
-#include <thread>
-
 using namespace std;
-
-const int n = 60;
+const int n = 40;
+const int m = 20;
 int INF = 9999;
-
 #define SOURCE 1024
 #define DEST 2024
 #define WALL 3024
@@ -112,8 +104,8 @@ bool operator<(const Node& n1, const Node& n2) {
 vector<Node> nodes;
 priority_queue<Node> nQueue;
 Node mapn[n][n];
-Node start;
-Node endn;
+Node *start;
+Node *endn;
 vector<SPoint> path;
 bool gridHasSource() {
 	for (int i = 0; i < n; i++) {
@@ -143,21 +135,23 @@ void clicked(int i, int j, int type) {
 		float dif = 0.1;
 		if (type == SOURCE)
 		{
-			glColor3f(0.0, 0.0, 1.0);
+			glColor3f(0.258, 0.031, 0.388);
+			dif = -0.1;
 		}
 		else if (type == DEST) {
-			glColor3f(1.0, 0.0, 1.0);
+			glColor3f(0.258, 0.031, 0.388);
+			dif = -0.1;
 		}
 		else if (type == WALL) {
-			glColor3f(0.0, 0.0, 0.0);
-			dif = 0;
-		}
-		else if (type == CHECKED) {
-			glColor3f(0.9, 0.4, 0.4);
+			glColor3f(0.047, 0.207, 0.278);
 			dif = 0.05;
 		}
+		else if (type == CHECKED) {
+			glColor3f(0.250, 0.807, 0.890);
+			dif = 0.08;
+		}
 		else if (type == PATH) {
-			glColor3f(1.0, 1.0, 0.1);
+			glColor3f(1, 0.996, 0.415);
 			dif = 0.0;
 		}
 
@@ -288,11 +282,11 @@ void makeReady() {
 			int type = nodes.at(j * n + i).getType();
 			if (type == SOURCE) {
 				//cout << " " << "S" << " ";
-				start = nodes.at(j * n + i);
+				start = &nodes.at(j * n + i);
 			}
 			else if (type == DEST) {
 				//cout << " " << "D" << " ";
-				endn = nodes.at(j * n + i);
+				endn = &nodes.at(j * n + i);
 			}
 			else if (type == WALL) {
 				//cout << " " << "W" << " ";
@@ -343,22 +337,22 @@ void makeReady() {
 		}
 		//cout << endl;
 	}
-	nQueue.push(start);
+	nQueue.push(*start);
 	//cout << "start node" << start.getGridPositionX() << "," << start.getGridPositionY() << endl;
 }
 
 void showPath(int value) {
 
 	cout << " Path is : " << endl;
-	if (mapn[endn.getGridPositionX()][endn.getGridPositionY()].type != INF) {
-		Node current = mapn[endn.getGridPositionX()][endn.getGridPositionY()];
+	if (mapn[endn->getGridPositionX()][endn->getGridPositionY()].type != INF) {
+		Node current = mapn[endn->getGridPositionX()][endn->getGridPositionY()];
 
 		while (current.type != SOURCE && current.parent.x != NULL && current.parent.y != NULL) {
 			cout << "Current node at end : " << current.parent.x << "," << current.parent.y << endl;
 			//path.push_back(current.parent);
 			current = mapn[current.parent.x][current.parent.y];
 			//nodes.at(current.getGridPositionX()* n + current.getGridPositionY()).type = PATH;
-			if (current.type != start.type) {
+			if (current.type != start->type) {
 				nodes.at(current.getGridPositionX() * n + current.getGridPositionY()).type = PATH;
 			}
 		}
@@ -378,7 +372,7 @@ void drive(int value) {
 		//cout << "Current Node" << current.getGridPositionX() << "," << current.getGridPositionY() << endl;*/
 		if (current.type == DEST) {
 			//cout << "End Found" << endl;
-			mapn[endn.getGridPositionX()][endn.getGridPositionY()].distance = FOUND;
+			mapn[endn->getGridPositionX()][endn->getGridPositionY()].distance = FOUND;
 			flag = 1;
 		}
 		//top
@@ -578,11 +572,11 @@ void findPath() {
 void display(void) {
 	//cout << "Node Size is : " << nodes.size() << endl;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClearColor(0.964, 0.964, 0.964, 1.0);
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			glLineWidth(1);
-			glColor3f(0.0, 1.0, 0.0);
+			glColor3f(0.686, 0.847, 0.972);
 			glBegin(GL_LINE_LOOP);
 			glVertex2f(i, j);
 			glVertex2f(i, j + 1);
@@ -619,11 +613,18 @@ void resize(int w, int h) {
 
 void reset() {
 	flag = 0;
-	memset(mapn, 0, sizeof(mapn[0][0]));
+	memset(mapn, NULL, sizeof(mapn[0][0])*n*n);
 	path.clear();
+	vector<SPoint>().swap(path);
+	path.shrink_to_fit();
+	cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
 	nodes.clear();
-	start = Node();
-	endn = Node();
+	vector<Node>().swap(nodes);
+	cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
+	nodes.shrink_to_fit();
+	cout << "size and capacity" << nodes.size() << " " << nodes.capacity() << endl;
+	//delete &start;
+	//delete &endn;
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			Node node = Node(i, j, EMPTY, false, INF);
@@ -635,15 +636,16 @@ void reset() {
 
 void onKeyPress(unsigned char key, int x, int y) {
 	switch (key) {
-	case 27:exit(0);
+	case 27:
+		exit(0);
 		break;
 	case 115:
+	case 'S':
 		findPath(); //starts algorithm
 		break;
 	case 114:
+	case 'R':
 		reset(); //clears all points
-		break;
-	default:
 		break;
 	}
 	glutPostRedisplay();
@@ -661,7 +663,7 @@ int main(int argc, char** argv) {
 	glutInitWindowPosition(50, 50);
 	glutInitWindowSize(screenWidth, screenHeight);
 	glutCreateWindow("square");
-	glClearColor(1.0, 1.0, 1.0, 1.0);         // black background
+	glClearColor(0.964, 0.964, 0.964, 1.0);         // black background
 	glMatrixMode(GL_PROJECTION);              // setup viewing projection
 	glLoadIdentity();        // start with identity matrix
 	glOrtho(0.0, n, n, 0.0, -1.0, 1.0);   // setup a 10x10x2 viewing world
