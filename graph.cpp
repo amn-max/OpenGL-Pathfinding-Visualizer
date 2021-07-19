@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <string>
 
 using namespace std;
 const int n = 40;
@@ -29,6 +30,8 @@ const int TIME_SECS = 1000;
 const int SCREEN_FPS = 60;
 bool canAcceptInput = true;
 int flag = 0;
+bool isOnStartPage = true;
+
 class SPoint {
 public:
 	int x;
@@ -43,6 +46,7 @@ public:
 	}
 
 };
+
 
 class Node {
 public:
@@ -138,7 +142,7 @@ void clicked(int i, int j, int type) {
 			dif = -0.1;
 		}
 		else if (type == DEST) {
-			glColor3f(0.258, 0.031, 0.388);
+			glColor3f(0.772, 0.447, 1);
 			dif = -0.1;
 		}
 		else if (type == WALL) {
@@ -576,24 +580,74 @@ void findPath() {
 	//}
 }
 
+void drawString(float x, float y, float z, char* string) {
+	glRasterPos3f(x, y, z);
+
+	for (char* c = string; *c != '\0'; c++) {
+		glColor3f(1, 1, 1);
+		
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);  // Updates the position
+	}
+}
+
+float findBitmapMidPoint(const char* str) {
+	return ((n / 2) - (strlen(str) / 2) * 8.76 / 31);
+}
+
 void display(void) {
 	////cout << "Node Size is : " << nodes.size() << endl;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.964, 0.964, 0.964, 1.0);
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			glLineWidth(1);
-			glColor3f(0.686, 0.847, 0.972);
-			glBegin(GL_LINE_LOOP);
-			glVertex2f(i, j);
-			glVertex2f(i, j + 1);
-			glVertex2f(i + 1, j + 1);
-			glVertex2f(i + 1, j);
-			glEnd();
-		}
+	if (isOnStartPage) {
+		//Starting page
+		glClearColor(0.117, 0.423, 0.713, 1.0);
+		char collegeName[64] = "BLDEA's V P Dr PG Halakatti College of Engineering & Technology";
+		char dept[31] = "Department of Computer Science";
+		char proj[21] = "OpengGL Mini Project";
+		char title[23] = "Pathfinding Visualizer";
+		char instrc[43] = "Instructions";
+		char text1[21] = "Press Enter To Start";
+		char text2[28] = "Press 'r' or 'R' to Restart";
+		char text3[38] = "Press 's' or 'S' to Start Visualizing";
+		char text4[64] = "Press Left Mouse to place Nodes and Right Mouse to remove Nodes";
+		char text5[35] = "Press <ESC KEY> to quit the window";
+		char text6[13] = "Created By:";
+		char text7[23] = "Ayush Naik, Arjun Naik";
+		char text8[23] = "2BL18CS012, 2BL18CS010";
+		drawString(findBitmapMidPoint(collegeName), 3, 0.0, collegeName);
+		drawString(findBitmapMidPoint(dept), 6, 0.0, dept);
+		drawString(findBitmapMidPoint(proj), 8, 0.0, proj);
+		drawString(findBitmapMidPoint(title), 13, 0.0, title);
+		drawString(findBitmapMidPoint(instrc), 16, 0.0, instrc);
+		drawString(findBitmapMidPoint(text1), 18, 0.0, text1);
+		drawString(findBitmapMidPoint(text2), 19, 0.0, text2);
+		drawString(findBitmapMidPoint(text3), 20, 0.0, text3);
+		drawString(findBitmapMidPoint(text4), 21, 0.0, text4);
+		drawString(findBitmapMidPoint(text5), 22, 0.0, text5);
+		drawString(n-10, n-5, 0.0, text6);
+		drawString(n - 10, n - 3, 0.0, text7);
+		drawString(n - 10, n - 2, 0.0, text8);
 	}
-	reDrawPoints();
+	else {
+		//gird page
+		
+		glClearColor(0.964, 0.964, 0.964, 1.0);
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				glLineWidth(1);
+				glColor3f(0.686, 0.847, 0.972);
+				glBegin(GL_LINE_LOOP);
+				glVertex2f(i, j);
+				glVertex2f(i, j + 1);
+				glVertex2f(i + 1, j + 1);
+				glVertex2f(i + 1, j);
+				glEnd();
+			}
+		}
+		reDrawPoints();
+		
+	}
 	glutSwapBuffers();
+	glutPostRedisplay();
 }
 
 void onMouseMovement(int x, int y) {
@@ -655,12 +709,15 @@ void onKeyPress(unsigned char key, int x, int y) {
 	case 115:
 	case 'S':
 		if (canAcceptInput) {
-			findPath();//starts algorithm
+			findPath(); //starts algorithm
 		}
 		break;
 	case 114:
 	case 'R':
 		reset(); //clears all points
+		break;
+	case 13:
+		isOnStartPage = false;
 		break;
 	}
 	glutPostRedisplay();
@@ -676,12 +733,18 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowPosition(50, 50);
-	glutInitWindowSize(screenWidth, screenHeight);
 	glutCreateWindow("square");
-	glClearColor(0.964, 0.964, 0.964, 1.0);         // black background
+	glutFullScreen();
+	//glutInitWindowSize(screenWidth, screenHeight);
+	
+	//glClearColor(0.964, 0.964, 0.964, 1.0);
 	glMatrixMode(GL_PROJECTION);              // setup viewing projection
 	glLoadIdentity();        // start with identity matrix
 	glOrtho(0.0, n, n, 0.0, -1.0, 1.0);   // setup a 10x10x2 viewing world
+	/*glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);*/
 	glutDisplayFunc(display);
 	glutMouseFunc(handleMouse);
 	glutReshapeFunc(resize);
