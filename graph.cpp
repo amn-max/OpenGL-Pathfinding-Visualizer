@@ -34,8 +34,8 @@ bool isOnStartPage = true;
 
 class SPoint {
 public:
-	int x;
-	int y;
+	int x=NULL;
+	int y=NULL;
 	SPoint(void) {
 
 	}
@@ -50,12 +50,11 @@ public:
 
 class Node {
 public:
-	int gridx;
-	int gridy;
-	double distance;
-	int type;
-	bool visited;
-	bool blocked;
+	int gridx=NULL;
+	int gridy=NULL;
+	double distance=INF;
+	int type=NULL;
+	bool visited=false;
 	SPoint parent = SPoint(NULL, NULL);
 	Node(void) {
 
@@ -170,7 +169,7 @@ void clicked(int i, int j, int type) {
 }
 
 void reDrawPoints() {
-	for (int i = 0; i < nodes.size(); i++) {
+	for (size_t i = 0; i < nodes.size(); i++) {
 		int x = nodes[i].getGridPositionX();
 		int y = nodes[i].getGridPositionY();
 		//i == 0 ? clicked(x, y, i + 1) : clicked(x, y, i + 1);
@@ -193,7 +192,7 @@ void addPoints(int x, int y) {
 	int posx = x / (screenWidth / n);
 	int posy = y / (screenHeight / n);
 
-	for (int i = 0; i < nodes.size(); i++) {
+	for (size_t i = 0; i < nodes.size(); i++) {
 		int x = nodes.at(i).getGridPositionX();
 		int y = nodes.at(i).getGridPositionY();
 
@@ -222,7 +221,7 @@ void addPoints(int x, int y) {
 void removePoints(int x, int y) {
 	int posx = x / (screenWidth / n);
 	int posy = y / (screenHeight / n);
-	for (int i = 2; i < nodes.size(); i++) {
+	for (size_t i = 2; i < nodes.size(); i++) {
 		int x = nodes.at(i).getGridPositionX();
 		int y = nodes.at(i).getGridPositionY();
 		if (x == posx && y == posy && hasNodePlaced(nodes.at(i))) {
@@ -252,22 +251,6 @@ void handleMouse(int button, int state, int x, int y) {
 			isMouseRightDown = 1;
 		}
 		glutPostRedisplay();
-	}
-}
-
-Node getStartNode() {
-	for (int i = 0; i < n; i++) {
-		if (nodes.at(i).getType() == SOURCE) {
-			return nodes.at(i);
-		}
-	}
-}
-
-Node getEndNode() {
-	for (int i = 0; i < n; i++) {
-		if (nodes.at(i).getType() == DEST) {
-			return nodes.at(i);
-		}
 	}
 }
 
@@ -315,33 +298,33 @@ void makeReady() {
 	}
 
 	////cout << "Distmap is:" << endl;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			try {
+	//for (int i = 0; i < n; i++) {
+	//	for (int j = 0; j < n; j++) {
+	//		try {
 
-				////cout << "(" << mapn[i][j].getGridPositionX() << "," << mapn[i][j].getGridPositionY() << ")" << "  ";
-			}
-			catch (const out_of_range& e) {
+	//			////cout << "(" << mapn[i][j].getGridPositionX() << "," << mapn[i][j].getGridPositionY() << ")" << "  ";
+	//		}
+	//		catch (const out_of_range& e) {
 
-			}
-		}
-		////cout << endl;
-	}
+	//		}
+	//	}
+	//	////cout << endl;
+	//}
 
 
 	////cout << "distance" << endl;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			try {
+	//for (int i = 0; i < n; i++) {
+	//	for (int j = 0; j < n; j++) {
+	//		try {
 
-				////cout << mapn[i][j].distance << "  ";
-			}
-			catch (const out_of_range& e) {
+	//			////cout << mapn[i][j].distance << "  ";
+	//		}
+	//		catch (const out_of_range& e) {
 
-			}
-		}
-		////cout << endl;
-	}
+	//		}
+	//	}
+	//	////cout << endl;
+	//}
 	nQueue.push(*start);
 	////cout << "start node" << start.getGridPositionX() << "," << start.getGridPositionY() << endl;
 }
@@ -704,7 +687,7 @@ void reset() {
 bool hasSourceAndDest() {
 	int nodeCount=0;
 	if (nodes.size() > 0) {
-		for (int i = 0; i < nodes.size(); i++) {
+		for (size_t i = 0; i < nodes.size(); i++) {
 			if (nodes.at(i).type == SOURCE || nodes.at(i).type == DEST) {
 				++nodeCount;
 				if (nodeCount == 1) {
