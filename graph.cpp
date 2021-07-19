@@ -7,7 +7,7 @@
 #include <chrono>
 using namespace std;
 const int n = 40;
-const int m = 20;
+
 int INF = 9999;
 #define SOURCE 1024
 #define DEST 2024
@@ -29,6 +29,7 @@ double hVDistance = 1.0;
 double dDistance = 1.4;
 const int TIME_SECS = 1000;
 const int SCREEN_FPS = 60;
+bool canAcceptInput = true;
 int flag = 0;
 class SPoint {
 public:
@@ -232,22 +233,24 @@ void removePoints(int x, int y) {
 }
 
 void handleMouse(int button, int state, int x, int y) {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-		isMouseLeftDown = 0;
-		//cout << "Mouse Left Clicked at : x=" << x / 50 + 1 << " y=" << y / 50 + 1 << endl;
-		addPoints(x, y);
+	if (canAcceptInput) {
+		if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+			isMouseLeftDown = 0;
+			//cout << "Mouse Left Clicked at : x=" << x / 50 + 1 << " y=" << y / 50 + 1 << endl;
+			addPoints(x, y);
+		}
+		else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+			isMouseLeftDown = 1;
+		}
+		else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+			isMouseRightDown = 0;
+			removePoints(x, y);
+		}
+		else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+			isMouseRightDown = 1;
+		}
+		glutPostRedisplay();
 	}
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		isMouseLeftDown = 1;
-	}
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
-		isMouseRightDown = 0;
-		removePoints(x, y);
-	}
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
-		isMouseRightDown = 1;
-	}
-	glutPostRedisplay();
 }
 
 Node getStartNode() {
@@ -363,8 +366,11 @@ void showPath(int value) {
 
 }
 void drive(int value) {
-	if (value > 0) {
-		Node current = nQueue.top();
+	if (value > 0 && !nQueue.empty()) {
+		Node current; 
+		if (!nQueue.empty()) {
+			current = nQueue.top();
+		}
 		///cout <<"Size Queue: "<<nQueue.size() << endl;/
 		//nQueue.pop();
 		Node t;
@@ -538,11 +544,12 @@ void drive(int value) {
 
 	}
 	int prevSize = nQueue.size();
-	if (prevSize > 0) {
+	if (!nQueue.empty()) {
 		nQueue.pop();
 	}
 	else {
 		cout << "Destination Not Found" << endl;
+		canAcceptInput = true;
 	}
 	int currSize = nQueue.size();
 	if (prevSize - currSize && flag == 0) {
@@ -550,11 +557,13 @@ void drive(int value) {
 	}
 	else if (flag == 1) {
 		showPath(1);
+		canAcceptInput = true;
 	}
 
 }
 
 void findPath() {
+	canAcceptInput = false;
 	makeReady();
 	drive(nQueue.size());
 	//while (nQueue.size() > 0) {
@@ -590,13 +599,15 @@ void display(void) {
 }
 
 void onMouseMovement(int x, int y) {
-	if (isMouseLeftDown == 1 && nodes.size() > 1) {
-		addPoints(x, y);
-		glutPostRedisplay();
-	}
-	if (isMouseRightDown == 1 && nodes.size() > 1) {
-		removePoints(x, y);
-		glutPostRedisplay();
+	if (canAcceptInput) {
+		if (isMouseLeftDown == 1 && nodes.size() > 1) {
+			addPoints(x, y);
+			glutPostRedisplay();
+		}
+		if (isMouseRightDown == 1 && nodes.size() > 1) {
+			removePoints(x, y);
+			glutPostRedisplay();
+		}
 	}
 }
 
@@ -614,6 +625,9 @@ void resize(int w, int h) {
 void reset() {
 	flag = 0;
 	memset(mapn, NULL, sizeof(mapn[0][0])*n*n);
+	while (!nQueue.empty()) {
+		nQueue.pop();
+	}
 	path.clear();
 	vector<SPoint>().swap(path);
 	path.shrink_to_fit();
@@ -632,6 +646,7 @@ void reset() {
 		}
 	}
 	startEndNodes = 0;
+	glutPostRedisplay();
 }
 
 void onKeyPress(unsigned char key, int x, int y) {
