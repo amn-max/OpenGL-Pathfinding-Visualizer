@@ -701,6 +701,27 @@ void reset() {
 	glutPostRedisplay();
 }
 
+bool hasSourceAndDest() {
+	int nodeCount=0;
+	if (nodes.size() > 0) {
+		for (int i = 0; i < nodes.size(); i++) {
+			if (nodes.at(i).type == SOURCE || nodes.at(i).type == DEST) {
+				++nodeCount;
+				if (nodeCount == 1) {
+					continue;
+				}
+				else if (nodeCount == 2) {
+					break;
+				}
+			}
+		}
+	}
+	if (nodeCount == 2) {
+		return true;
+	}
+	return false;
+}
+
 void onKeyPress(unsigned char key, int x, int y) {
 	switch (key) {
 	case 27:
@@ -709,7 +730,10 @@ void onKeyPress(unsigned char key, int x, int y) {
 	case 115:
 	case 'S':
 		if (canAcceptInput) {
-			findPath(); //starts algorithm
+			if (hasSourceAndDest()) {
+				findPath(); //starts algorithm
+			}
+			
 		}
 		break;
 	case 114:
